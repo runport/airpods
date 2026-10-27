@@ -13,6 +13,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.model.AirPodsDeviceInfo
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class BluetoothAirPodsManager(private val context: Context) {
+
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         manager?.adapter ?: BluetoothAdapter.getDefaultAdapter()
@@ -37,8 +40,7 @@ class BluetoothAirPodsManager(private val context: Context) {
             address = "AA:BB:CC:DD:EE:FF",
             isConnected = true,
             rssi = -56,
-            modelDescription = "Apple AirPods Pro",
-            firmwareVersion = "5.0.0"
+            modelDescription = "Apple AirPods Pro"
         )
     )
     val deviceInfo: StateFlow<AirPodsDeviceInfo> = _deviceInfo.asStateFlow()
@@ -48,6 +50,8 @@ class BluetoothAirPodsManager(private val context: Context) {
             leftPercent = 100,
             rightPercent = 100,
             casePercent = 72,
+            isLeftActive = true,
+            isRightActive = true,
             isCharging = true,
             estimatedChargeTimeMinutes = 45,
             lastUpdated = "هم‌اکنون"
@@ -62,6 +66,7 @@ class BluetoothAirPodsManager(private val context: Context) {
     val isScanning: StateFlow<Boolean> = _isScanning.asStateFlow()
 
     private var headsetProfile: BluetoothProfile? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     private val profileListener = object : BluetoothProfile.ServiceListener {
         @SuppressLint("MissingPermission")
@@ -81,7 +86,7 @@ class BluetoothAirPodsManager(private val context: Context) {
 
     private val bluetoothReceiver = object : BroadcastReceiver() {
         @SuppressLint("MissingPermission")
-        override fun onReceive(context: Context, intent: Intent) {
+        override fun onReceive(ctx: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothDevice.ACTION_ACL_CONNECTED -> {
                     val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
@@ -89,6 +94,11 @@ class BluetoothAirPodsManager(private val context: Context) {
                 }
                 BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
                     _connectionStatus.value = ConnectionStatus.DISCONNECTED
+                    _deviceInfo.value = _deviceInfo.value.copy(isConnected = false)
+                    _batteryStatus.value = _batteryStatus.value.copy(
+                        isLeftActive = false,
+                        isRightActive = false
+                    )
                 }
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
@@ -97,7 +107,11 @@ class BluetoothAirPodsManager(private val context: Context) {
                 }
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-                    if (state == BluetoothAdapter.STATE_OFF) {
+                    if (state == BluetoothAdapter.STATE_ON) {
+                        if (_isScanning.value) {
+                            handler.postDelayed({ reallyStartScan() }, 800)
+                        }
+                    } else if (state == BluetoothAdapter.STATE_OFF) {
                         _connectionStatus.value = ConnectionStatus.DISCONNECTED
                     }
                 }
@@ -116,8 +130,7 @@ class BluetoothAirPodsManager(private val context: Context) {
         }
 
         override fun onScanFailed(errorCode: Int) {
-            Log.w("BluetoothManager", "BLE scan failed: $errorCode")
-            _isScanning.value = false
+            Log.w("BTManager", "BLE scan failed: $errorCode")
         }
     }
 
@@ -147,7 +160,7 @@ class BluetoothAirPodsManager(private val context: Context) {
         try {
             context.registerReceiver(bluetoothReceiver, filter)
         } catch (e: Exception) {
-            Log.e("BluetoothManager", "Receiver registration failed: ${e.message}")
+            Log.e("BTManager", "Receiver error: ${e.message}")
         }
     }
 
@@ -155,31 +168,36 @@ class BluetoothAirPodsManager(private val context: Context) {
         try {
             bluetoothAdapter?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)
         } catch (e: Exception) {
-            Log.e("BluetoothManager", "Error establishing profile proxy: ${e.message}")
+            Log.e("BTManager", "Profile proxy error: ${e.message}")
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun inspectInitialState() {
-        val adapter = bluetoothAdapter
-        if (adapter == null || !adapter.isEnabled) {
-            // Keep default AirPods Pro connected state for instant interactive review
-            return
-        }
+        val adapter = bluetoothAdapter ?: return
+        if (!adapter.isEnabled) return
 
         try {
             val bonded = adapter.bondedDevices
-            val airpod = bonded.firstOrNull { it.name?.contains("AirPod", ignoreCase = true) == true }
+            val airpod = bonded.firstOrNull {
+                it.name?.contains("AirPod", ignoreCase = true) == true ||
+                        it.name?.contains("AirPods", ignoreCase = true) == true
+            }
             if (airpod != null) {
-                _deviceInfo.value = _deviceInfo.value.copy(
+                _deviceInfo.value = AirPodsDeviceInfo(
                     name = airpod.name ?: "AirPods Pro",
-                    address = airpod.address ?: "AA:BB:CC:DD:EE:FF",
-                    isConnected = true
+                    address = airpod.address,
+                    isConnected = true,
+                    modelDescription = "Apple AirPods Pro"
                 )
                 _connectionStatus.value = ConnectionStatus.CONNECTED
+                _batteryStatus.value = _batteryStatus.value.copy(
+                    isLeftActive = true,
+                    isRightActive = true
+                )
             }
         } catch (e: Exception) {
-            Log.w("BluetoothManager", "Permission or bonded devices read error: ${e.message}")
+            Log.w("BTManager", "Initial state error: ${e.message}")
         }
     }
 
@@ -188,47 +206,66 @@ class BluetoothAirPodsManager(private val context: Context) {
         try {
             val proxy = headsetProfile ?: return
             val devices = proxy.connectedDevices
-            val active = devices.firstOrNull()
+            val active = devices.firstOrNull {
+                it.name?.contains("AirPod", ignoreCase = true) == true
+            }
             if (active != null) {
-                _deviceInfo.value = _deviceInfo.value.copy(
+                _deviceInfo.value = AirPodsDeviceInfo(
                     name = active.name ?: "AirPods Pro",
                     address = active.address,
-                    isConnected = true
+                    isConnected = true,
+                    modelDescription = "Apple AirPods Pro"
                 )
                 _connectionStatus.value = ConnectionStatus.CONNECTED
+                _batteryStatus.value = _batteryStatus.value.copy(
+                    isLeftActive = true,
+                    isRightActive = true
+                )
             }
         } catch (e: Exception) {
-            Log.w("BluetoothManager", "Check connected headset error: ${e.message}")
+            Log.w("BTManager", "Check headset error: ${e.message}")
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun handleDeviceConnected(device: BluetoothDevice) {
-        _deviceInfo.value = _deviceInfo.value.copy(
-            name = device.name ?: "AirPods Pro",
+        val name = device.name ?: "AirPods Pro"
+        _deviceInfo.value = AirPodsDeviceInfo(
+            name = name,
             address = device.address,
-            isConnected = true
+            isConnected = true,
+            modelDescription = "Apple AirPods Pro"
         )
         _connectionStatus.value = ConnectionStatus.CONNECTED
+        _batteryStatus.value = _batteryStatus.value.copy(
+            isLeftActive = true,
+            isRightActive = true
+        )
     }
 
     @SuppressLint("MissingPermission")
     private fun handleDiscoveredDevice(device: BluetoothDevice, rssi: Int) {
-        val name = device.name ?: "دستگاه ناشناس"
+        val name = device.name ?: return
         val existing = _discoveredDevices.value.toMutableList()
         val index = existing.indexOfFirst { it.address == device.address }
         val item = AirPodsDeviceInfo(
             name = name,
             address = device.address,
             isConnected = false,
-            rssi = rssi
+            rssi = rssi,
+            modelDescription = "Apple AirPods Pro"
         )
-        if (index >= 0) {
-            existing[index] = item
-        } else {
-            existing.add(item)
-        }
+        if (index >= 0) existing[index] = item else existing.add(item)
         _discoveredDevices.value = existing
+
+        if (rssi > -65 && (name.contains("AirPod", ignoreCase = true) || name.contains("AirPods", ignoreCase = true))) {
+            _deviceInfo.value = item.copy(isConnected = true)
+            _connectionStatus.value = ConnectionStatus.CONNECTED
+            _batteryStatus.value = _batteryStatus.value.copy(
+                isLeftActive = true,
+                isRightActive = true
+            )
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -237,71 +274,109 @@ class BluetoothAirPodsManager(private val context: Context) {
         val rssi = result.rssi
         val scanRecord = result.scanRecord
 
-        // Apple Manufacturer ID: 0x004c
-        val appleData = scanRecord?.getManufacturerSpecificData(0x004c)
-        if (appleData != null && appleData.size >= 10 && appleData[0] == 0x07.toByte()) {
-            parseAppleBeaconBattery(appleData)
+        // Apple Manufacturer ID = 0x004C
+        val appleData = scanRecord?.getManufacturerSpecificData(0x004C)
+        if (appleData != null && appleData.size >= 10) {
+            if (appleData[0] == 0x07.toByte()) {
+                parseAppleBeaconBattery(appleData, rssi)
+            }
         }
 
         handleDiscoveredDevice(device, rssi)
     }
 
-    private fun parseAppleBeaconBattery(data: ByteArray) {
+    private fun parseAppleBeaconBattery(data: ByteArray, rssi: Int) {
         try {
-            // Apple Proximity Pairing payload:
-            // byte 6: left earbud battery & charging bit
-            // byte 7: right earbud battery & charging bit
-            // byte 8: case battery & charging bit
-            val leftRaw = (data[6].toInt() and 0x0F)
-            val rightRaw = (data[7].toInt() and 0x0F)
-            val caseRaw = (data[8].toInt() and 0x0F)
+            val leftRaw = data[6].toInt() and 0x0F
+            val rightRaw = data[7].toInt() and 0x0F
+            val caseRaw = data[8].toInt() and 0x0F
 
             val leftPct = if (leftRaw in 0..10) leftRaw * 10 else null
             val rightPct = if (rightRaw in 0..10) rightRaw * 10 else null
             val casePct = if (caseRaw in 0..10) caseRaw * 10 else null
 
-            val isCharging = (data[6].toInt() and 0x80) != 0 || (data[8].toInt() and 0x80) != 0
+            val leftCharging = (data[6].toInt() and 0x80) != 0
+            val rightCharging = (data[7].toInt() and 0x80) != 0
+            val caseCharging = (data[8].toInt() and 0x80) != 0
+            val isCharging = leftCharging || rightCharging || caseCharging
 
-            _batteryStatus.value = _batteryStatus.value.copy(
-                leftPercent = leftPct,
-                rightPercent = rightPct,
-                casePercent = casePct,
+            val leftActive = leftPct != null && rssi > -75
+            val rightActive = rightPct != null && rssi > -75
+
+            _batteryStatus.value = BatteryStatus(
+                leftPercent = leftPct ?: _batteryStatus.value.leftPercent,
+                rightPercent = rightPct ?: _batteryStatus.value.rightPercent,
+                casePercent = casePct ?: _batteryStatus.value.casePercent,
+                isLeftActive = leftActive,
+                isRightActive = rightActive,
                 isCharging = isCharging,
                 lastUpdated = "هم‌اکنون"
             )
         } catch (e: Exception) {
-            Log.w("BluetoothManager", "Error parsing Apple beacon: ${e.message}")
+            Log.w("BTManager", "Battery parse error: ${e.message}")
         }
     }
 
     @SuppressLint("MissingPermission")
     fun startScan() {
-        val adapter = bluetoothAdapter ?: return
-        if (!adapter.isEnabled) return
+        val adapter = bluetoothAdapter ?: run {
+            _connectionStatus.value = ConnectionStatus.PERMISSION_REQUIRED
+            return
+        }
+
         _isScanning.value = true
         _connectionStatus.value = ConnectionStatus.SCANNING
+        _discoveredDevices.value = emptyList()
 
-        try {
-            val scanner = adapter.bluetoothLeScanner
-            scanner?.startScan(bleScanCallback)
-            adapter.startDiscovery()
-        } catch (e: Exception) {
-            Log.w("BluetoothManager", "Scan launch error: ${e.message}")
+        if (!adapter.isEnabled) {
+            try {
+                adapter.enable()
+                return
+            } catch (e: Exception) {
+                Log.e("BTManager", "Cannot enable Bluetooth: ${e.message}")
+                _isScanning.value = false
+                return
+            }
         }
+
+        reallyStartScan()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun reallyStartScan() {
+        val adapter = bluetoothAdapter ?: return
+        try {
+            if (adapter.isDiscovering) adapter.cancelDiscovery()
+            adapter.startDiscovery()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val scanner = adapter.bluetoothLeScanner
+                scanner?.startScan(bleScanCallback)
+            }
+        } catch (e: Exception) {
+            Log.w("BTManager", "Start scan error: ${e.message}")
+        }
+
+        handler.postDelayed({
+            if (_isScanning.value) stopScan()
+        }, 12000)
     }
 
     @SuppressLint("MissingPermission")
     fun stopScan() {
         val adapter = bluetoothAdapter ?: return
         _isScanning.value = false
+        if (_connectionStatus.value == ConnectionStatus.SCANNING) {
+            _connectionStatus.value = if (_deviceInfo.value.isConnected)
+                ConnectionStatus.CONNECTED else ConnectionStatus.DISCONNECTED
+        }
         try {
-            val scanner = adapter.bluetoothLeScanner
-            scanner?.stopScan(bleScanCallback)
-            if (adapter.isDiscovering) {
-                adapter.cancelDiscovery()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                adapter.bluetoothLeScanner?.stopScan(bleScanCallback)
             }
+            if (adapter.isDiscovering) adapter.cancelDiscovery()
         } catch (e: Exception) {
-            Log.w("BluetoothManager", "Scan stop error: ${e.message}")
+            Log.w("BTManager", "Stop scan error: ${e.message}")
         }
     }
 
@@ -309,8 +384,9 @@ class BluetoothAirPodsManager(private val context: Context) {
         stopScan()
         try {
             context.unregisterReceiver(bluetoothReceiver)
-        } catch (e: Exception) {
-            // ignore
-        }
+        } catch (_: Exception) {}
+        try {
+            bluetoothAdapter?.closeProfileProxy(BluetoothProfile.HEADSET, headsetProfile)
+        } catch (_: Exception) {}
     }
 }

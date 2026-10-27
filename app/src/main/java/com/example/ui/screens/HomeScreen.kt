@@ -1,6 +1,5 @@
 package com.example.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
@@ -43,13 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.R
 import com.example.model.ScreenDestination
 import com.example.ui.AirPodsViewModel
 import com.example.ui.components.GlassCard
@@ -118,8 +115,8 @@ fun HomeScreen(
                     )
                 }
                 Text(
-                    text = "Connected",
-                    color = CyanAccent,
+                    text = if (deviceInfo.isConnected) "Connected" else "Disconnected",
+                    color = if (deviceInfo.isConnected) CyanAccent else TextMuted,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -137,32 +134,82 @@ fun HomeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Center Hero Graphic
-        Box(
+        // ========== دو ایرپاد جداگانه بدون کیس با حلقه سبز دور ایرپاد فعال ==========
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .padding(horizontal = 20.dp)
-                .clip(RoundedCornerShape(26.dp))
-                .background(Color(0xFF070E1A))
-                .border(1.dp, CardBorderNavy, RoundedCornerShape(26.dp)),
-            contentAlignment = Alignment.Center
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.airpods_hero),
-                contentDescription = "AirPods Pro Graphic",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+            // Left AirPod Unit
+            AirPodUnit(
+                label = "L",
+                subLabel = "چپ",
+                percent = batteryStatus.leftPercent,
+                isActive = batteryStatus.isLeftActive,
+                onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) }
+            )
+
+            // Right AirPod Unit
+            AirPodUnit(
+                label = "R",
+                subLabel = "راست",
+                percent = batteryStatus.rightPercent,
+                isActive = batteryStatus.isRightActive,
+                onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) }
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Device Model Label
+        // Case status زیر دو ایرپاد
+        GlassCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 40.dp),
+            onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.BatteryFull,
+                    contentDescription = null,
+                    tint = if (batteryStatus.casePercent != null) SuccessGreen else TextMuted,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "کیس شارژ: ",
+                    color = TextSecondary,
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = if (batteryStatus.casePercent != null)
+                        "${batteryStatus.casePercent}%" else "—",
+                    color = if (batteryStatus.isCharging) SuccessGreen else TextPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (batteryStatus.isCharging) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("⚡", fontSize = 13.sp)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // نام مدل ایرپاد
         Text(
-            text = deviceInfo.name,
+            text = deviceInfo.name.ifEmpty { "AirPods Pro" },
             color = TextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
@@ -170,38 +217,7 @@ fun HomeScreen(
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Battery Status Pills (Left, Right, Case)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            BatteryPill(
-                label = "L",
-                percent = batteryStatus.leftPercent,
-                onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            BatteryPill(
-                label = "R",
-                percent = batteryStatus.rightPercent,
-                onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            BatteryPill(
-                label = "Case",
-                percent = batteryStatus.casePercent,
-                onClick = { onNavigate(ScreenDestination.BATTERY_DETAIL) },
-                modifier = Modifier.weight(1.1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Now Playing Media Card
         GlassCard(
@@ -358,45 +374,57 @@ fun HomeScreen(
 }
 
 @Composable
-fun BatteryPill(
+fun AirPodUnit(
     label: String,
+    subLabel: String,
     percent: Int?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    isActive: Boolean,
+    onClick: () -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(CardDarkNavy)
-            .border(1.dp, CardBorderNavy, RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .padding(vertical = 10.dp, horizontal = 10.dp),
-        contentAlignment = Alignment.Center
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { onClick() }
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(105.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF0A1424))
+                .border(
+                    width = if (isActive) 3.dp else 1.5.dp,
+                    color = if (isActive) SuccessGreen else CardBorderNavy,
+                    shape = CircleShape
+                )
         ) {
-            Icon(
-                imageVector = if (percent != null && percent > 0) Icons.Outlined.BatteryChargingFull else Icons.Outlined.BatteryFull,
-                contentDescription = null,
-                tint = if (percent != null) SuccessGreen else TextMuted,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "$label ",
-                color = TextSecondary,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = if (percent != null) "$percent%" else "نامشخص",
-                color = TextPrimary,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Headset,
+                    contentDescription = "$label $subLabel",
+                    tint = if (isActive) SuccessGreen else CyanAccent,
+                    modifier = Modifier.size(38.dp)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "$label ($subLabel)",
+                    color = if (isActive) SuccessGreen else TextMuted,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text(
+            text = if (percent != null) "$percent%" else "—",
+            color = if (isActive) SuccessGreen else TextPrimary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

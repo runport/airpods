@@ -24,10 +24,10 @@ enum class EqualizerPreset(val labelFa: String, val gains: List<Float>) {
 
 data class AirPodsDeviceInfo(
     val name: String = "AirPods Pro",
-    val address: String = "AA:BB:CC:DD:EE:FF",
+    val address: String = "",
     val isConnected: Boolean = true,
     val rssi: Int = -58,
-    val modelDescription: String = "Apple AirPods Pro (2nd Gen)",
+    val modelDescription: String = "Apple AirPods Pro",
     val firmwareVersion: String = "5.0.0"
 )
 
@@ -35,6 +35,8 @@ data class BatteryStatus(
     val leftPercent: Int? = 100,
     val rightPercent: Int? = 100,
     val casePercent: Int? = 72,
+    val isLeftActive: Boolean = true,      // حلقه سبز برای ایرپاد فعال
+    val isRightActive: Boolean = true,     // حلقه سبز برای ایرپاد فعال
     val isCharging: Boolean = true,
     val estimatedChargeTimeMinutes: Int = 45,
     val lastUpdated: String = "هم‌اکنون"

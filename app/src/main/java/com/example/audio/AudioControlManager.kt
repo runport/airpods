@@ -15,7 +15,7 @@ class AudioControlManager(private val context: Context) {
 
     var isHardwareEqualizerSupported: Boolean = false
         private set
-    var numberOfBands: Int = 5
+    var numberOfBands: Int = 10
         private set
 
     init {
@@ -23,26 +23,40 @@ class AudioControlManager(private val context: Context) {
     }
 
     private fun initAudioEffects() {
-        try {
-            // Attach to global audio session 0 (or device output)
-            val eq = Equalizer(0, 0)
+        // Try session 0 first (global output)
+        if (!tryAttachEqualizer(0)) {
+            // Try standard media audio session IDs on Android 5.1
+            for (session in listOf(1, 2, 3, 4, 5, 10, 100)) {
+                if (tryAttachEqualizer(session)) break
+            }
+        }
+
+        if (!isHardwareEqualizerSupported) {
+            Log.d("AudioControlManager", "Software equalizer active with 10 bands")
+            numberOfBands = 10
+        }
+    }
+
+    private fun tryAttachEqualizer(sessionId: Int): Boolean {
+        return try {
+            val eq = Equalizer(0, sessionId)
             eq.enabled = true
             numberOfBands = eq.numberOfBands.toInt().coerceIn(3, 10)
             equalizer = eq
             isHardwareEqualizerSupported = true
-            Log.d("AudioControlManager", "Equalizer initialized with $numberOfBands bands")
-        } catch (e: Exception) {
-            Log.w("AudioControlManager", "System global Equalizer unavailable, software fallback active: ${e.message}")
-            isHardwareEqualizerSupported = false
-            numberOfBands = 10
-        }
 
-        try {
-            val bb = BassBoost(0, 0)
-            bb.enabled = true
-            bassBoost = bb
+            try {
+                val bb = BassBoost(0, sessionId)
+                bb.enabled = true
+                bassBoost = bb
+            } catch (e: Exception) {
+                Log.w("AudioControlManager", "BassBoost unavailable on session $sessionId: ${e.message}")
+            }
+
+            Log.d("AudioControlManager", "Equalizer attached to session $sessionId with $numberOfBands bands")
+            true
         } catch (e: Exception) {
-            Log.w("AudioControlManager", "BassBoost unavailable: ${e.message}")
+            false
         }
     }
 
@@ -72,8 +86,6 @@ class AudioControlManager(private val context: Context) {
             val range = eq.bandLevelRange
             val minMb = range[0]
             val maxMb = range[1]
-            // gainDb usually ranges between -6 dB and +6 dB (or -10 to +10)
-            // Millibels = dB * 100
             val targetMb = (gainDb * 100).toInt().coerceIn(minMb.toInt(), maxMb.toInt()).toShort()
             if (bandIndex < eq.numberOfBands) {
                 eq.setBandLevel(bandIndex.toShort(), targetMb)
@@ -86,7 +98,6 @@ class AudioControlManager(private val context: Context) {
     fun setBassBoost(percent: Int) {
         val bb = bassBoost ?: return
         try {
-            // BassBoost strength is 0 to 1000
             val strength = (percent.coerceIn(0, 100) * 10).toShort()
             bb.setStrength(strength)
         } catch (e: Exception) {
