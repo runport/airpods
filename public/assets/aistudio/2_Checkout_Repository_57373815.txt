@@ -1,0 +1,73 @@
+﻿2026-10-27T15:44:15.5514335Z ##[group]Run actions/checkout@v4
+2026-10-27T15:44:15.5515094Z with:
+2026-10-27T15:44:15.5515458Z   repository: runport/airpods
+2026-10-27T15:44:15.5518502Z   token: ***
+2026-10-27T15:44:15.5518843Z   ssh-strict: true
+2026-10-27T15:44:15.5519181Z   ssh-user: git
+2026-10-27T15:44:15.5519529Z   persist-credentials: true
+2026-10-27T15:44:15.5520124Z   clean: true
+2026-10-27T15:44:15.5520481Z   sparse-checkout-cone-mode: true
+2026-10-27T15:44:15.5520875Z   fetch-depth: 1
+2026-10-27T15:44:15.5521206Z   fetch-tags: false
+2026-10-27T15:44:15.5521552Z   show-progress: true
+2026-10-27T15:44:15.5521900Z   lfs: false
+2026-10-27T15:44:15.5522223Z   submodules: false
+2026-10-27T15:44:15.5522570Z   set-safe-directory: true
+2026-10-27T15:44:15.5522984Z   allow-unsafe-pr-checkout: false
+2026-10-27T15:44:15.5523652Z ##[endgroup]
+2026-10-27T15:44:15.6717086Z Syncing repository: runport/airpods
+2026-10-27T15:44:15.6720028Z ##[group]Getting Git version info
+2026-10-27T15:44:15.6721086Z Working directory is '/home/runner/work/airpods/airpods'
+2026-10-27T15:44:15.6722973Z [command]/usr/bin/git version
+2026-10-27T15:44:15.6760823Z git version 2.55.0
+2026-10-27T15:44:15.6829402Z ##[endgroup]
+2026-10-27T15:44:15.6837137Z Temporarily overriding HOME='/home/runner/work/_temp/e93427da-416a-4a93-be6e-d348b6d19dc1' before making global git config changes
+2026-10-27T15:44:15.6846664Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-27T15:44:15.6848480Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/airpods/airpods
+2026-10-27T15:44:15.6941043Z Deleting the contents of '/home/runner/work/airpods/airpods'
+2026-10-27T15:44:15.6971550Z ##[group]Initializing the repository
+2026-10-27T15:44:15.6973491Z [command]/usr/bin/git init /home/runner/work/airpods/airpods
+2026-10-27T15:44:15.7077597Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-27T15:44:15.7100084Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-27T15:44:15.7113551Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-27T15:44:15.7115262Z hint: call:
+2026-10-27T15:44:15.7116521Z hint:
+2026-10-27T15:44:15.7117604Z hint: 	git config --global init.defaultBranch <name>
+2026-10-27T15:44:15.7118854Z hint:
+2026-10-27T15:44:15.7120495Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-27T15:44:15.7122123Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-27T15:44:15.7123498Z hint:
+2026-10-27T15:44:15.7124538Z hint: 	git branch -m <name>
+2026-10-27T15:44:15.7125647Z hint:
+2026-10-27T15:44:15.7126835Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-27T15:44:15.7128549Z Initialized empty Git repository in /home/runner/work/airpods/airpods/.git/
+2026-10-27T15:44:15.7132161Z [command]/usr/bin/git remote add origin https://github.com/runport/airpods
+2026-10-27T15:44:15.7209791Z ##[endgroup]
+2026-10-27T15:44:15.7212095Z ##[group]Disabling automatic garbage collection
+2026-10-27T15:44:15.7213801Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-27T15:44:15.7254932Z ##[endgroup]
+2026-10-27T15:44:15.7256863Z ##[group]Setting up auth
+2026-10-27T15:44:15.7273400Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-27T15:44:15.7373929Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-27T15:44:15.7843447Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-27T15:44:15.7884893Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-27T15:44:15.8135212Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-27T15:44:15.8178302Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-27T15:44:15.8435330Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-27T15:44:15.8479068Z ##[endgroup]
+2026-10-27T15:44:15.8481834Z ##[group]Fetching the repository
+2026-10-27T15:44:15.8491283Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +2718b38adb7acf829be2f079115e06ce3d17a5bc:refs/remotes/origin/main
+2026-10-27T15:44:17.0449259Z From https://github.com/runport/airpods
+2026-10-27T15:44:17.0468003Z  * [new ref]         2718b38adb7acf829be2f079115e06ce3d17a5bc -> origin/main
+2026-10-27T15:44:17.0498032Z ##[endgroup]
+2026-10-27T15:44:17.0499287Z ##[group]Determining the checkout info
+2026-10-27T15:44:17.0500780Z ##[endgroup]
+2026-10-27T15:44:17.0501490Z [command]/usr/bin/git sparse-checkout disable
+2026-10-27T15:44:17.0583766Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-27T15:44:17.0651117Z ##[group]Checking out the ref
+2026-10-27T15:44:17.0675748Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-27T15:44:17.0893943Z Switched to a new branch 'main'
+2026-10-27T15:44:17.0901295Z branch 'main' set up to track 'origin/main'.
+2026-10-27T15:44:17.0910630Z ##[endgroup]
+2026-10-27T15:44:17.0969715Z [command]/usr/bin/git log -1 --format=%H
+2026-10-27T15:44:17.0999308Z 2718b38adb7acf829be2f079115e06ce3d17a5bc

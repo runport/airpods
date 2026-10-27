@@ -29,8 +29,6 @@ jobs:
           cmdline-tools-version: 12266719
           accept-android-sdk-licenses: true
           log-accepted-android-sdk-licenses: true
-          # Note: 'tools' package was removed from modern Android SDK. 
-          # Using platform-tools and android-34 platform instead:
           packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
 
       - name: Grant execute permission for gradlew
@@ -39,12 +37,29 @@ jobs:
             chmod +x gradlew
           fi
 
+      - name: Setup Debug Keystore
+        run: |
+          if [ -f "debug.keystore.base64" ]; then
+            base64 -d debug.keystore.base64 > debug.keystore
+          fi
+          if [ ! -f "debug.keystore" ]; then
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Build APK with Gradle
         run: |
           if [ -f "./gradlew" ]; then
             ./gradlew assembleDebug --stacktrace
           else
             gradle assembleDebug --stacktrace
+          fi
+
+      - name: Run Unit Tests
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew testDebugUnitTest --stacktrace
+          else
+            gradle testDebugUnitTest --stacktrace
           fi
 
       - name: Upload APK Artifact
