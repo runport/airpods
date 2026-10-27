@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">AirPods Control</string>
+    <string name="app_name_fa">کنترل ایرپاد</string>
+    <string name="connected">متصل</string>
+    <string name="disconnected">قطع شده</string>
+    <string name="connecting">در حال اتصال...</string>
+    <string name="scanning">در حال اسکن...</string>
+    <string name="permission_required">نیازمند مجوز</string>
+    <string name="tab_home">خانه</string>
+    <string name="tab_equalizer">اکولایزر</string>
+    <string name="tab_settings">تنظیمات</string>
+    <string name="battery_left">ایرپاد چپ</string>
+    <string name="battery_right">ایرپاد راست</string>
+    <string name="battery_case">کیس شارژ</string>
+    <string name="battery_unknown">نامشخص</string>
+    <string name="charging">در حال شارژ</string>
+    <string name="find_airpods">جستجوی ایرپاد</string>
+    <string name="sound_modes">حالت صدا</string>
+    <string name="sound_control">کنترل صدا</string>
+    <string name="advanced_settings">تنظیمات پیشرفته</string>
+</resources>

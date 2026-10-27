@@ -1,0 +1,6 @@
+{
+  "name": "AirPods Control",
+  "description": "برنامه حرفه‌ای مدیریت و کنترل ایرپاد با اکولایزر واقعی، بررسی وضعیت باتری، کنترل صدا، اسکن بلوتوث و رابط کاربری تاریک پریمیوم",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
