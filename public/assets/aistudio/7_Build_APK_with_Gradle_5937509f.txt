@@ -1,0 +1,99 @@
+﻿2026-10-27T16:11:08.6071780Z ##[group]Run if [ -f "./gradlew" ]; then
+2026-10-27T16:11:08.6072226Z [36;1mif [ -f "./gradlew" ]; then[0m
+2026-10-27T16:11:08.6072533Z [36;1m  ./gradlew assembleDebug --stacktrace[0m
+2026-10-27T16:11:08.6072821Z [36;1melse[0m
+2026-10-27T16:11:08.6073050Z [36;1m  gradle assembleDebug --stacktrace[0m
+2026-10-27T16:11:08.6073344Z [36;1mfi[0m
+2026-10-27T16:11:08.6136697Z shell: /usr/bin/bash -e {0}
+2026-10-27T16:11:08.6136957Z env:
+2026-10-27T16:11:08.6137274Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:11:08.6137812Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:11:08.6138245Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-27T16:11:08.6138556Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-27T16:11:08.6138847Z ##[endgroup]
+2026-10-27T16:11:11.5034082Z 
+2026-10-27T16:11:11.5052561Z Welcome to Gradle 9.8.1!
+2026-10-27T16:11:11.5053332Z 
+2026-10-27T16:11:11.5053889Z Here are the highlights of this release:
+2026-10-27T16:11:11.5054854Z  - Java 27 support
+2026-10-27T16:11:11.5055577Z  - Maven mirror settings reuse
+2026-10-27T16:11:11.5056465Z  - Linked problem locations in build output
+2026-10-27T16:11:11.5057103Z 
+2026-10-27T16:11:11.5057767Z For more details see https://docs.gradle.org/9.8.1/release-notes.html
+2026-10-27T16:11:11.5058475Z 
+2026-10-27T16:11:11.8986183Z Starting a Gradle Daemon (subsequent builds will be faster)
+2026-10-27T16:11:18.5996583Z Calculating task graph as no cached configuration is available for tasks: assembleDebug
+2026-10-27T16:12:48.2062818Z > Task :app:preBuild UP-TO-DATE
+2026-10-27T16:12:48.2066072Z > Task :app:generateDebugAssets UP-TO-DATE
+2026-10-27T16:12:48.2110394Z > Task :app:preDebugBuild UP-TO-DATE
+2026-10-27T16:12:48.2131889Z > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+2026-10-27T16:12:48.3031929Z 
+2026-10-27T16:12:48.3050857Z > Task :app:processDebugGoogleServices
+2026-10-27T16:12:48.3056318Z File google-services.json is missing.
+2026-10-27T16:12:48.3057707Z The Google Services Plugin cannot function without it.
+2026-10-27T16:12:48.3061881Z Searched locations: /home/runner/work/airpods/airpods/app/src/debug/google-services.json, /home/runner/work/airpods/airpods/app/src/debug/google-services.json, /home/runner/work/airpods/airpods/app/src/google-services.json, /home/runner/work/airpods/airpods/app/src/debug/google-services.json, /home/runner/work/airpods/airpods/app/src/Debug/google-services.json, /home/runner/work/airpods/airpods/app/google-services.json
+2026-10-27T16:12:48.3065407Z 
+2026-10-27T16:12:48.3065951Z > Task :app:generateDebugResources
+2026-10-27T16:12:48.4002362Z > Task :app:generateDebugBuildConfig
+2026-10-27T16:12:48.4024704Z > Task :app:kspDebugKotlin SKIPPED
+2026-10-27T16:12:48.4041864Z > Task :app:javaPreCompileDebug
+2026-10-27T16:12:48.9012453Z > Task :app:packageDebugResources
+2026-10-27T16:12:57.0972781Z > Task :app:checkDebugDuplicateClasses
+2026-10-27T16:12:57.1981543Z > Task :app:mergeDebugAssets
+2026-10-27T16:12:57.2032140Z > Task :app:processDebugNavigationResources
+2026-10-27T16:12:57.2072121Z > Task :app:compressDebugAssets
+2026-10-27T16:12:57.3012634Z > Task :app:mergeLibDexDebug
+2026-10-27T16:12:57.3052325Z > Task :app:mapDebugSourceSetPaths
+2026-10-27T16:12:57.3982436Z > Task :app:checkDebugAarMetadata
+2026-10-27T16:12:57.4022279Z > Task :app:createDebugCompatibleScreenManifests
+2026-10-27T16:12:57.4981979Z > Task :app:extractDeepLinksDebug
+2026-10-27T16:12:57.8004678Z > Task :app:compileDebugNavigationResources
+2026-10-27T16:12:58.5972792Z > Task :app:processDebugMainManifest
+2026-10-27T16:12:58.8992627Z > Task :app:parseDebugLocalResources
+2026-10-27T16:12:59.0005409Z > Task :app:generateDebugRFile
+2026-10-27T16:12:59.1012679Z > Task :app:processDebugManifest
+2026-10-27T16:12:59.1342194Z > Task :app:processDebugManifestForPackage
+2026-10-27T16:12:59.1382029Z > Task :app:mergeDebugJniLibFolders
+2026-10-27T16:13:00.6984900Z > Task :app:mergeDebugNativeLibs
+2026-10-27T16:13:02.4982110Z 
+2026-10-27T16:13:02.5082177Z > Task :app:stripDebugDebugSymbols
+2026-10-27T16:13:02.5157416Z Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+2026-10-27T16:13:02.5235286Z 
+2026-10-27T16:13:02.5262029Z > Task :app:validateSigningDebug
+2026-10-27T16:13:02.5985833Z > Task :app:writeDebugAppMetadata
+2026-10-27T16:13:02.6002099Z > Task :app:writeDebugSigningConfigVersions
+2026-10-27T16:13:03.3002802Z > Task :app:mergeDebugResources
+2026-10-27T16:13:03.4971702Z > Task :app:desugarDebugFileDependencies
+2026-10-27T16:13:04.8972883Z > Task :app:processDebugResources
+2026-10-27T16:13:28.9972510Z > Task :app:compileDebugKotlin
+2026-10-27T16:13:33.4992295Z > Task :app:mergeExtDexDebug
+2026-10-27T16:14:58.2001957Z 
+2026-10-27T16:14:58.2062421Z > Task :app:compileDebugKotlin
+2026-10-27T16:14:58.2083613Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/bluetooth/BluetoothAirPodsManager.kt:28:46 'static fun getDefaultAdapter(): BluetoothAdapter!' is deprecated. Deprecated in Java.
+2026-10-27T16:14:58.2125015Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/bluetooth/BluetoothAirPodsManager.kt:87:41 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+2026-10-27T16:14:58.2183496Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/bluetooth/BluetoothAirPodsManager.kt:94:41 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+2026-10-27T16:14:58.2186973Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/ui/screens/EqualizerScreen.kt:295:53 'val Icons.Filled.VolumeDown: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeDown.
+2026-10-27T16:14:58.2190554Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/ui/screens/EqualizerScreen.kt:310:53 'val Icons.Filled.VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeUp.
+2026-10-27T16:14:58.2194309Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/ui/screens/HomeScreen.kt:290:49 'val Icons.Filled.VolumeDown: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeDown.
+2026-10-27T16:14:58.2198017Z w: file:///home/runner/work/airpods/airpods/app/src/main/java/com/example/ui/screens/HomeScreen.kt:305:49 'val Icons.Filled.VolumeUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.VolumeUp.
+2026-10-27T16:15:23.9982186Z 
+2026-10-27T16:15:23.9996722Z > Task :app:processDebugJavaRes
+2026-10-27T16:15:24.9972281Z > Task :app:compileDebugJavaWithJavac
+2026-10-27T16:15:31.1971474Z > Task :app:mergeDebugJavaResource
+2026-10-27T16:15:31.3979443Z > Task :app:dexBuilderDebug
+2026-10-27T16:15:31.9974487Z > Task :app:mergeProjectDexDebug
+2026-10-27T16:16:19.7971170Z > Task :app:packageDebug
+2026-10-27T16:16:19.7976183Z > Task :app:assembleDebug
+2026-10-27T16:16:19.7977108Z > Task :app:createDebugApkListingFileRedirect
+2026-10-27T16:16:19.7977859Z 
+2026-10-27T16:16:19.7979116Z [Incubating] Problems report is available at: file:///home/runner/work/airpods/airpods/build/reports/problems/problems-report.html
+2026-10-27T16:16:19.7980316Z 
+2026-10-27T16:16:19.7981415Z Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+2026-10-27T16:16:19.7982370Z 
+2026-10-27T16:16:19.7983622Z You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+2026-10-27T16:16:19.7984858Z 
+2026-10-27T16:16:19.7986344Z For more on this, please refer to https://docs.gradle.org/9.8.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+2026-10-27T16:16:19.7988190Z 
+2026-10-27T16:16:19.8912747Z BUILD SUCCESSFUL in 5m 11s
+2026-10-27T16:16:19.8953135Z 38 actionable tasks: 38 executed
+2026-10-27T16:16:19.8956414Z Configuration cache entry stored.

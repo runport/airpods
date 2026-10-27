@@ -1,0 +1,31 @@
+﻿2026-10-27T16:16:43.2552617Z ##[group]Run actions/upload-artifact@v4
+2026-10-27T16:16:43.2553137Z with:
+2026-10-27T16:16:43.2553473Z   name: airpods-control-apk
+2026-10-27T16:16:43.2553930Z   path: app/build/outputs/apk/debug/*.apk
+2026-10-27T16:16:43.2554394Z   retention-days: 14
+2026-10-27T16:16:43.2554758Z   if-no-files-found: warn
+2026-10-27T16:16:43.2555126Z   compression-level: 6
+2026-10-27T16:16:43.2555484Z   overwrite: false
+2026-10-27T16:16:43.2555834Z   include-hidden-files: false
+2026-10-27T16:16:43.2556219Z env:
+2026-10-27T16:16:43.2556705Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:16:43.2557546Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:16:43.2558232Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-27T16:16:43.2558736Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-27T16:16:43.2559196Z ##[endgroup]
+2026-10-27T16:16:43.5912806Z (node:2920) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-27T16:16:43.5922379Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-27T16:16:43.6022892Z With the provided path, there will be 1 file uploaded
+2026-10-27T16:16:43.6035871Z Artifact name is valid!
+2026-10-27T16:16:43.6036658Z Root directory input is valid!
+2026-10-27T16:16:43.8408551Z Beginning upload of artifact content to blob storage
+2026-10-27T16:16:44.1344675Z (node:2920) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-27T16:16:44.3184365Z Uploaded bytes 8388608
+2026-10-27T16:16:44.5236779Z Uploaded bytes 16777216
+2026-10-27T16:16:44.5659457Z Uploaded bytes 18468813
+2026-10-27T16:16:44.5860386Z Finished uploading artifact content to blob storage!
+2026-10-27T16:16:44.5862830Z SHA256 digest of uploaded artifact zip is e3d4f542fb556ebdf55bb225f54e353179ba710f7974a8bda6dbf0c1bbb9087b
+2026-10-27T16:16:44.5864587Z Finalizing artifact upload
+2026-10-27T16:16:44.9949312Z Artifact airpods-control-apk.zip successfully finalized. Artifact ID 12750045799
+2026-10-27T16:16:44.9952193Z Artifact airpods-control-apk has been successfully uploaded! Final size is 18468813 bytes. Artifact ID is 12750045799
+2026-10-27T16:16:44.9962854Z Artifact download URL: https://github.com/runport/airpods/actions/runs/40538334948/artifacts/12750045799

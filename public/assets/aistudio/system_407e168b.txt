@@ -1,0 +1,8 @@
+2026-10-27T16:10:46.6710000Z Evaluating build.if
+2026-10-27T16:10:46.6710000Z Evaluating: success()
+2026-10-27T16:10:46.6710000Z Result: true
+2026-10-27T16:10:46.6660000Z Requested labels: ubuntu-latest
+2026-10-27T16:10:46.6660000Z Job defined at: runport/airpods/.github/workflows/build.yml@refs/heads/main
+2026-10-27T16:10:46.6660000Z Waiting for a runner to pick up this job...
+2026-10-27T16:10:47.1110000Z Job is about to start running on the hosted runner: GitHub Actions 1000000172
+2026-10-27T16:10:47.1120000Z Job is waiting for a hosted runner to come online.

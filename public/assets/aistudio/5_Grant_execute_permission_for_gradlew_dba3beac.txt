@@ -1,0 +1,11 @@
+﻿2026-10-27T16:11:07.3134182Z ##[group]Run if [ -f "./gradlew" ]; then
+2026-10-27T16:11:07.3134595Z [36;1mif [ -f "./gradlew" ]; then[0m
+2026-10-27T16:11:07.3134888Z [36;1m  chmod +x gradlew[0m
+2026-10-27T16:11:07.3135129Z [36;1mfi[0m
+2026-10-27T16:11:07.3442432Z shell: /usr/bin/bash -e {0}
+2026-10-27T16:11:07.3442855Z env:
+2026-10-27T16:11:07.3443292Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:11:07.3444239Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-27T16:11:07.3444830Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-10-27T16:11:07.3445254Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-10-27T16:11:07.3445648Z ##[endgroup]
